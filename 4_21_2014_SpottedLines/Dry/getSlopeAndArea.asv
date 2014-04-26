@@ -1,0 +1,29 @@
+function [slopeUp, slopeDown, areaUnderCurve] = getSlopeAndArea(normalizedValues, indexUp, minValue)
+ 
+    if(~isempty(indexUp))
+        slopeUp = (normalizedValues(indexUp + 5) - normalizedValues(indexUp))/5;
+        valuesDown = find(normalizedValues > minValue);
+        indexDown = find(valuesDown > indexUp,1);
+        pt1_d = valuesDown(indexDown);
+        slopeDown = (normalizedValues(pt1_d) - normalizedValues(pt1_d - 5))/5;
+        areaUnderCurve = sum(normalizedValues(pt1:pt1_d));
+    else
+        slopeUp = 0;
+        slopeDown = 0;
+        areaUnderCurve = 0;
+
+    end
+end
+
+        if(~isempty(pt1))
+            slope_up_1 = (avgNormalizedOne(pt1 + 5) - avgNormalizedOne(pt1))/5;
+            pt1_down = find(avgNormalizedOne > minValue);
+            pt1_down_index = find(pt1_down > pt1,1);
+            pt1_d = pt1_down(pt1_down_index);
+            slope_down_1 = (avgNormalizedOne(pt1_d) - avgNormalizedOne(pt1_d - 5))/5;
+            sum_under_curve_1 = sum(avgNormalizedOne(pt1:pt1_d));
+        else
+            slope_up_1 = 0;
+            slope_down_1 = 0;
+            sum_under_curve_1 = 0;
+        end
