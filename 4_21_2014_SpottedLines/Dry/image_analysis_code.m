@@ -1,5 +1,7 @@
-% Krittika D'Silva
+% Written by Krittika D'Silva (kdsilva@uw.edu)
 
+% Code to automatically process immunoassay tests.
+% Assumes 5 strips on each test
 clear all, close all, clc
 
 % Path of photos
@@ -7,35 +9,37 @@ path = 'C:\Users\KDsilva\Dropbox\Images_of_Device\4_21_2014_SpottedLines\Dry\*.j
 % Point at which we're calculating the slope & area under the curve
 minValue = 0.97;
 % Directory in which processed images will be saved
-dir_processed_images = 'C:\Users\KDsilva\Dropbox\Images_of_Device\4_21_2014_SpottedLines\Dry\Processed';
+dirProcessedImages = 'C:\Users\KDsilva\Dropbox\Images_of_Device\4_21_2014_SpottedLines\Dry\Processed';
 
 imagefiles = dir(path);
 nfiles = length(imagefiles);    % Number of files found
 
+
 tic;
 
-for i = 1:nfiles
+for i = 19              % Files to process
     currentfilename = imagefiles(i).name
     currentimage = imread(currentfilename);
     size(currentimage);
+    
     % % Original image
-    %   figure(1 + i * nfiles)
+    %   figure(1 + i * nfiles)  % Numbering ensures figures are not overwritten
     %   imshow(currentimage)
     %   title('Original Image')
     
     % Blue Data
-    blueChannel = currentimage(:,:,1);
+    blueChannel = currentimage(:, :, 1);
     
     % New dimensions
     [height,width]=size(blueChannel);
-    width_left = round(width/8);
-    width_right = round(width*7/8);
-    height_top = round(height*3/8);
-    height_bottom = round(height*3/4);
+    widthLeft = round(width / 8);
+    widthRight = round(width * 7/8);
+    heightTop = round(height * 3/8);
+    heightBottom = round(height * 3/4);
     
     % Roughly cropped photo, red channel & cropped
-    regionOfInterest_red = blueChannel(height_top:height_bottom,width_left:width_right);
-    croppedImage = currentimage(height_top:height_bottom,width_left:width_right, :);
+    regionOfInterestRed = blueChannel(heightTop:heightBottom, widthLeft:widthRight);
+    croppedImage = currentimage(heightTop:heightBottom, widthLeft:widthRight, :);
     
     % % Original image, cropped
     %   figure(2 + i * nfiles)
@@ -43,8 +47,8 @@ for i = 1:nfiles
     %   title('Original Image After a Rough Crop')
     %
     % Black and white
-    level_red = graythresh(regionOfInterest_red);
-    bw_red = im2bw(regionOfInterest_red, level_red);
+    levelRed = graythresh(regionOfInterestRed);
+    bwRed = im2bw(regionOfInterestRed, levelRed);
     
     % % Original image, cropped
     %   figure(3 + i * nfiles)
@@ -52,10 +56,10 @@ for i = 1:nfiles
     %   title('Original Image, Cropped - B&W')
     
     % Find circles
-    [centers, radii,metric] = imfindcircles(bw_red,[10 20],'ObjectPolarity','dark', 'Sensitivity',0.90);
+    [centers, radii, metric] = imfindcircles(bwRed, [10 20], 'ObjectPolarity','dark', 'Sensitivity', 0.90);
     
     if (length(centers) > 4)
-        [centersUpdated,radiiUpdated] = findFourFiducials(centers,radii,metric);
+        [centersUpdated, radiiUpdated] = findFourFiducials(centers, radii, metric);
         
         % Rough crop, with circles on original image found
         %       figure(4 + i * nfiles)
@@ -66,8 +70,8 @@ for i = 1:nfiles
         %       title('Original Image, Cropped - With Fiducials Found')
         
         % New points to be used for spatial transformation
-        topLeftXY = roundn(centersUpdated(1,:),1);
-        bottomRightXY = roundn(centersUpdated(4,:),1);
+        topLeftXY = roundn(centersUpdated(1,:), 1);
+        bottomRightXY = roundn(centersUpdated(4,:), 1);
         
         % Creating a rectangle with the points
         newCenters = [topLeftXY; bottomRightXY(1), topLeftXY(2); topLeftXY(1), bottomRightXY(2); bottomRightXY];
@@ -86,27 +90,32 @@ for i = 1:nfiles
         %       title('Original Image, Cropped- Transformed using Fiducials Found')
         
         % Crop the image to the new coordinates
-        transformedImageCropped = imcrop(transformedImage,[topLeftXY(1),topLeftXY(2),bottomRightXY(1) - topLeftXY(1),bottomRightXY(2) - topLeftXY(2)]);
+        transformedImageCropped = imcrop(transformedImage, [topLeftXY(1), topLeftXY(2), bottomRightXY(1) - topLeftXY(1), bottomRightXY(2) - topLeftXY(2)]);
         
         %       figure(6 + i * nfiles)
         %       imshow(transformedImageCropped);
         
         % Resizing (NaN: MATLAB computers number of # columns automatically
         %           to preserve the image aspect ratio)
-        resizedImage = imresize(transformedImageCropped, [380, 1100],'bilinear');
-        
-        size(resizedImage);
+        resizedImage = imresize(transformedImageCropped, [380, 1100], 'bilinear');
         
         % New resized image
-        plt1 =  figure(7 + i * nfiles)
+        processedImg1 =  figure(7 + i * nfiles);
         hold on
         imshow(resizedImage);
         title('Original Image, Cropped After Transformation');
-        
+         
+        % Location of blue color standard
+        blueRectCS = [120,80,100,50];
+        % Location of black color standard
+        blackRectCS = [120,185,100,50];
+        % Location of white color standard
+        whiteRectCS = [120,295,100,50];
+         
         % Color standards
-        rectangle('Position',[120,80,100,50],'LineWidth',3, 'EdgeColor', 'r')
-        rectangle('Position',[120,185,100,50],'LineWidth',3, 'EdgeColor', 'r')
-        rectangle('Position',[120,295,100,50],'LineWidth',3, 'EdgeColor', 'r')
+        rectangle('Position', blueRectCS, 'LineWidth',3, 'EdgeColor', 'r')
+        rectangle('Position', blackRectCS,'LineWidth',3, 'EdgeColor', 'r')
+        rectangle('Position', whiteRectCS, 'LineWidth',3, 'EdgeColor', 'r')
         
         % QR code
         rectangle('Position',[730,30,360,350],'LineWidth',3, 'EdgeColor', 'r')
@@ -120,67 +129,60 @@ for i = 1:nfiles
         
         
         % Blue color standard
-        RGB_blue_CS =  mean((mean(imcrop(resizedImage,[120,80,100,50]))));
+        RGB_blue_CS =  mean((mean(imcrop(resizedImage, blueRectCS))));
         blue_CS = mean(RGB_blue_CS);
         
         % Black color standard
-        RGB_black_CS = mean((mean(imcrop(resizedImage,[120,185,100,50]))));
+        RGB_black_CS = mean((mean(imcrop(resizedImage, blackRectCS))));
         black_CS = mean(RGB_black_CS);
         
         % White color standard
-        RGB_white_CS = mean((mean(imcrop(resizedImage,[120,295,100,50]))));
+        RGB_white_CS = mean((mean(imcrop(resizedImage, whiteRectCS))));
         white_CS = mean(RGB_white_CS);
         
         % Location of 5 tests on the strip
-        first_rectangle = imcrop(resizedImage,[325,85,185,70]);
-        second_rectangle = imcrop(resizedImage,[325,170,185,70]);
-        third_rectangle = imcrop(resizedImage,[325,250,185,70]);
-        fourth_rectangle = imcrop(resizedImage,[530,90,185,80]);
-        fifth_rectangle = imcrop(resizedImage,[530,240,185,80]);
+        firstRectangle = imcrop(resizedImage,[325,85,185,70]);
+        secondRectangle = imcrop(resizedImage,[325,170,185,70]);
+        thirdRectangle = imcrop(resizedImage,[325,250,185,70]);
+        fourthRectangle = imcrop(resizedImage,[530,90,185,80]);
+        fifthRectangle = imcrop(resizedImage,[530,240,185,80]);
         
-        str1 = strcat('ProcessedImg_', 'Rectanges_Location', currentfilename);
+        figureTitle = strcat('ProcessedImg_', 'Rectanges_Location', currentfilename);
         
-        saveas(plt1,fullfile(dir_processed_images, str1),'jpg');
+        saveas(processedImg1,fullfile(dirProcessedImages, figureTitle),'jpg');
         
         % Plot images of 5 tests
-        plt =  figure(i+12)
+        processedImage2 =  figure(8 + i * nfiles);
         suptitle('Transformed Image - All 5 Tests');
         hold on
         subplot(4,2,[1,2])
-        imshow(resizedImage);
-        
+        imshow(resizedImage); 
         subplot(4,2,3)
-        imshow(first_rectangle)
-        
+        imshow(firstRectangle) 
         subplot(4,2,5)
-        imshow(second_rectangle)
-        
+        imshow(secondRectangle) 
         subplot(4,2,7)
-        imshow(third_rectangle)
-        
+        imshow(thirdRectangle) 
         subplot(4,2,4)
-        imshow(fourth_rectangle)
-        
+        imshow(fourthRectangle) 
         subplot(4,2,6)
-        imshow(fifth_rectangle)
-        
+        imshow(fifthRectangle) 
         
         strFirst = strcat('ProcessedImg_', 'Location', currentfilename);
+        saveas(processedImage2,fullfile(dirProcessedImages, strFirst),'jpg');
         
-        saveas(plt,fullfile(dir_processed_images, strFirst),'jpg');
-        
-        [height,width]=size(first_rectangle);
+        [height, width]=size(firstRectangle);
         centerWidth = round(width/2);
         
-        avgIntensityOne = first_rectangle(1:height, centerWidth-20:centerWidth+20);
+        avgIntensityOne = firstRectangle(1:height, centerWidth-20:centerWidth+20);
         avgIntensityOne = mean(avgIntensityOne, 2);
-        avgIntensityTwo = second_rectangle(1:height, centerWidth-20:centerWidth+20);
+        avgIntensityTwo = secondRectangle(1:height, centerWidth-20:centerWidth+20);
         avgIntensityTwo = mean(avgIntensityTwo, 2);
-        avgIntensityThree = third_rectangle(1:height, centerWidth-20:centerWidth+20);
+        avgIntensityThree = thirdRectangle(1:height, centerWidth-20:centerWidth+20);
         avgIntensityThree = mean(avgIntensityThree, 2);
-        avgIntensityFour = fourth_rectangle(1:height, centerWidth-20:centerWidth+20);
+        avgIntensityFour = fourthRectangle(1:height, centerWidth-20:centerWidth+20);
         avgIntensityFour = mean(avgIntensityFour, 2);
-        avgIntensityFive = fifth_rectangle(1:height, centerWidth-20:centerWidth+20);
+        avgIntensityFive = fifthRectangle(1:height, centerWidth-20:centerWidth+20);
         avgIntensityFive = mean(avgIntensityFive, 2);
         
         
@@ -192,7 +194,7 @@ for i = 1:nfiles
         
         
         % Plot test strip intensities
-        %       figure(i+100)
+        %       figure(9 + i * nfiles);
         %       suptitle('Transformed Image - 5 Test Strip Intensities');
         %       hold on
         %       subplot(4,2,[1,2])
@@ -214,7 +216,7 @@ for i = 1:nfiles
         %       plot(1:length(avgIntensityFive), avgIntensityFive)
         
         % Plot normalized test strip intensities
-        [height,width]=size(first_rectangle);
+        [height,width]=size(firstRectangle);
         centerWidth = round(width/2);
         centerHeight = round(height/2);
         
@@ -230,12 +232,10 @@ for i = 1:nfiles
         minNorm3 = min(avgNormalizedThree);
         minNorm4 = min(avgNormalizedFour);
         minNorm5 = min(avgNormalizedFive);
-        
-        
+         
         combinedStr = strcat('Transformed Image - 5 Normalized Test Strip Intensities: ',strrep(currentfilename,'_','\_'))
-        
-        
-        h = figure(i+16)
+         
+        processedImage = figure(10 + i * nfiles);
         
         suptitle(combinedStr);
         hold on
@@ -258,7 +258,7 @@ for i = 1:nfiles
         plot(1:length(avgIntensityFive), avgNormalizedFive)
         str = strcat('ProcessedImg_', currentfilename);
         
-        saveas(h,fullfile(dir_processed_images, str),'jpg');
+        saveas(processedImage,fullfile(dirProcessedImages, str),'jpg');
         
         
         % Returns the first index where the intensity of the test strip is
@@ -269,74 +269,14 @@ for i = 1:nfiles
         pt4 = find(avgNormalizedFour < minValue,1);
         pt5 = find(avgNormalizedFive < minValue,1);
         
-        if(~isempty(pt1))
-            slope_up_1 = (avgNormalizedOne(pt1 + 5) - avgNormalizedOne(pt1))/5;
-            pt1_down = find(avgNormalizedOne > minValue);
-            pt1_down_index = find(pt1_down > pt1,1);
-            pt1_d = pt1_down(pt1_down_index);
-            slope_down_1 = (avgNormalizedOne(pt1_d) - avgNormalizedOne(pt1_d - 5))/5;
-            sum_under_curve_1 = sum(avgNormalizedOne(pt1:pt1_d));
-        else
-            slope_up_1 = 0;
-            slope_down_1 = 0;
-            sum_under_curve_1 = 0;
-        end
-        
-        if(~isempty(pt2))
-            slope_up_2 = (avgNormalizedTwo(pt2 + 5) - avgNormalizedTwo(pt2))/5;
-            pt2_down = find(avgNormalizedTwo > minValue);
-            pt2_down_index = find(pt2_down > pt2,1);
-            pt2_d = pt2_down(pt2_down_index);
-            slope_down_2 = (avgNormalizedTwo(pt2_d) - avgNormalizedTwo(pt2_d - 5))/5;
-            sum_under_curve_2 = sum(avgNormalizedTwo(pt2:pt2_d));
-        else
-            slope_up_2 = 0;
-            slope_down_2 = 0;
-            sum_under_curve_2 = 0;
-        end
-        
-        if(~isempty(pt3))
-            slope_up_3 = (avgNormalizedThree(pt3 + 5) - avgNormalizedThree(pt3))/5;
-            pt3_down = find(avgNormalizedThree > minValue);
-            pt3_down_index = find(pt3_down > pt3,1);
-            pt3_d = pt3_down(pt3_down_index);
-            slope_down_3 = (avgNormalizedThree(pt3_d) - avgNormalizedThree(pt3_d - 5))/5;
-            sum_under_curve_3 = sum(avgNormalizedThree(pt3:pt3_d));
-        else
-            slope_up_3 = 0;
-            slope_down_3 = 0;
-            sum_under_curve_3 = 0;
-        end
-        
-        if(~isempty(pt4))
-            slope_up_4 = (avgNormalizedFour(pt4 + 5) - avgNormalizedFour(pt4))/5;
-            pt4_down = find(avgNormalizedFour > minValue);
-            pt4_down_index = find(pt4_down > pt4,1);
-            pt4_d = pt4_down(pt4_down_index);
-            slope_down_4 = (avgNormalizedFour(pt4_d) - avgNormalizedFour(pt4_d - 5))/5;
-            sum_under_curve_4 = sum(avgNormalizedFour(pt4:pt4_d));
-        else
-            slope_up_4 = 0;
-            slope_down_4 = 0;
-            sum_under_curve_4 = 0;
-        end
-        
-        if(~isempty(pt5))
-            slope_up_5 = (avgNormalizedFive(pt5 + 5) - avgNormalizedFive(pt5))/5;
-            pt5_down = find(avgNormalizedFive > minValue);
-            pt5_down_index = find(pt5_down > pt5,1);
-            pt5_d = pt5_down(pt5_down_index);
-            slope_down_5 = (avgNormalizedFive(pt5_d) - avgNormalizedFive(pt5_d - 5))/5;
-            sum_under_curve_5 = sum(avgNormalizedFive(pt5:pt5_d));
-        else
-            slope_up_5 = 0;
-            slope_down_5 = 0;
-            sum_under_curve_5 = 0;
-        end
+        [slope_up_1, slope_down_1, sum_under_curve_1] = getSlopeAndArea(avgNormalizedOne, pt1, minValue);
+        [slope_up_2, slope_down_2, sum_under_curve_2] = getSlopeAndArea(avgNormalizedTwo, pt2, minValue);
+        [slope_up_3, slope_down_3, sum_under_curve_3] = getSlopeAndArea(avgNormalizedThree, pt3, minValue);
+        [slope_up_4, slope_down_4, sum_under_curve_4] = getSlopeAndArea(avgNormalizedFour, pt4, minValue);
+        [slope_up_5, slope_down_5, sum_under_curve_5] = getSlopeAndArea(avgNormalizedFive, pt5, minValue);
         
         
-        
-        
+        % Generates a csv file with processed data 
         header = ['Name of file,', 'Blue Color Standard,', 'Black Color Standard,', 'White Color Standard,', 'Raw data Min- 1,', 'Raw data- Min 2,', 'Raw data- Min 3,', 'Raw data- Min 4,', 'Raw data- Min 5,', 'Normalized data- Min 1,', 'Normalized data- Min 2,', 'Normalized data- Min 3,', 'Normalized data- Min 4,', 'Normalized data- Min 5,','Slope Down- 1,','Slope Down- 2,','Slope Down- 3,','Slope Down- 4,','Slope Down- 5,','Slope Up- 1,','Slope Up- 2,','Slope Up- 3,','Slope Up- 4,','Slope Up- 5,', 'Sum under curve- 1,', 'Sum under curve- 2,', 'Sum under curve- 3,', 'Sum under curve- 4,', 'Sum under curve- 5,'];
         outid = fopen('Analysis_Updated_Algorithm.csv', 'at');
         fprintf(outid, '\n%s\n', datestr(now));

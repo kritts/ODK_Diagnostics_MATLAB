@@ -1,6 +1,8 @@
+% Given the location of at least 4 circles, their radii and intensity, 
+% returns the four most likely fiducial locations.
 function [outputCenters, outputRadii]=findFourFiducials(centers, radii, metric) 
   
-% Treshold
+    % Treshold of the min intensity of fiducial
     ind  = find(metric > 0.10);
     
     x_first = centers(ind(1));
@@ -13,7 +15,7 @@ function [outputCenters, outputRadii]=findFourFiducials(centers, radii, metric)
     
     index = 4;
     
-    if (length(ind) > 6)
+    if (length(ind) > 6)        % Examines distances between fiducials - approach here may need to be changed 
         seventh = centers(ind(7));
         d27 = pdist2(x_second,seventh,'euclidean');
         d17 = pdist2(x_first,seventh,'euclidean');
