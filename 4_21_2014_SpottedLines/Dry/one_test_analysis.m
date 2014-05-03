@@ -4,7 +4,7 @@
 % Modified version of original code - assumes only one strip on each test
 
 clear all, close all, clc
-
+ 
 % Path of photos
 path = 'C:\Users\KDsilva\Dropbox\Images_of_Device\4_21_2014_SpottedLines\Dry\*.jpg';
 % Point at which we're calculating the slope & area under the curve
@@ -208,6 +208,7 @@ for i = 1:nfiles             % Files to process
         
         [slope_up_1, slope_down_1, sum_under_curve_1] = getSlopeAndArea(avgNormalizedOne, pt1, minValue);
       
+        % Write data to a csv file 
         header = ['Name of file,', 'Blue Color Standard,', 'Black Color Standard,', 'White Color Standard,', 'Raw data,', 'Normalized data,', 'Slope Down,','Slope Up,','Sum under curve,'];
         outid = fopen('Analysis_Updated_Algorithm_5_3.csv', 'at');
         fprintf(outid, '\n%s\n', datestr(now));
