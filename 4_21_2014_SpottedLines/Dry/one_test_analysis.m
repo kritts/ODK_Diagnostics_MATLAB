@@ -17,7 +17,7 @@ nfiles = length(imagefiles);    % Number of files found
 
 tic;
 
-for i = 19              % Files to process
+for i = 1:nfiles             % Files to process
     currentfilename = imagefiles(i).name
     currentimage = imread(currentfilename);
     size(currentimage);
@@ -155,15 +155,16 @@ for i = 19              % Files to process
         subplot(2,2,[1,2])
         imshow(resizedImage);
         subplot(2,2,[3,4])
-        imshow(firstRectangle) 
+        imshow(firstRectangle)  
           
         strFirst = strcat('ProcessedImg_', '2', currentfilename);
         saveas(processedImage2,fullfile(dirProcessedImages, strFirst),'jpg');
         
-        [height, width]=size(firstRectangle);
+        [height, width, dimensions]=size(firstRectangle)
         centerWidth = round(width/2);
         
-        avgIntensityOne = firstRectangle(1:height, centerWidth-20:centerWidth+20);
+        % Looks specifically at the red color channel 
+        avgIntensityOne = firstRectangle(1:height, centerWidth-20:centerWidth+20,1);    
         avgIntensityOne = mean(avgIntensityOne, 2);  
         minOne = min(avgIntensityOne); 
         
@@ -205,10 +206,10 @@ for i = 19              % Files to process
         % less than the minimum value
         pt1 = find(avgNormalizedOne < minValue,1); 
         
-        [slope_up_1, slope_down_1, sum_under_curve_1] = getSlopeAndArea(avgNormalizedOne, pt1, minValue); 
+        [slope_up_1, slope_down_1, sum_under_curve_1] = getSlopeAndArea(avgNormalizedOne, pt1, minValue);
       
         header = ['Name of file,', 'Blue Color Standard,', 'Black Color Standard,', 'White Color Standard,', 'Raw data,', 'Normalized data,', 'Slope Down,','Slope Up,','Sum under curve,'];
-        outid = fopen('Analysis_Updated_Algorithm_4_25.csv', 'at');
+        outid = fopen('Analysis_Updated_Algorithm_5_3.csv', 'at');
         fprintf(outid, '\n%s\n', datestr(now));
         fprintf(outid, '%s\n', header);
         outputarray = [blue_CS, black_CS, white_CS, minOne, minNorm1, slope_up_1, slope_down_1,sum_under_curve_1];

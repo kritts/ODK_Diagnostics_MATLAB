@@ -8,7 +8,12 @@ function [slopeUp, slopeDown, areaUnderCurve] = getSlopeAndArea(normalizedValues
         listDownwards = find(allValuesDown > indexUp,1);
         indexDown = allValuesDown(listDownwards);
         slopeDown = (normalizedValues(indexDown) - normalizedValues(indexDown - 5))/5;
-        areaUnderCurve = sum(normalizedValues(indexUp:indexDown));
+        areaUnderCurve = 0;
+        for j = indexUp:indexDown 
+            areaUnderCurve = areaUnderCurve + (minValue - normalizedValues(j));
+        end
+        
+        
     else
         slopeUp = 0;
         slopeDown = 0;
