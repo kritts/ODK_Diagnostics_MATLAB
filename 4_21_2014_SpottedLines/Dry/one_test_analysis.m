@@ -4,7 +4,10 @@
 % Modified version of original code - assumes only one strip on each test
 
 clear all, close all, clc
- 
+
+% Path to common functions 
+addpath('C:\Users\KDsilva\Dropbox\Images_of_Device\Common');
+
 % Path of photos
 path = 'C:\Users\KDsilva\Dropbox\Images_of_Device\4_21_2014_SpottedLines\Dry\*.jpg';
 % Point at which we're calculating the slope & area under the curve
@@ -17,7 +20,7 @@ nfiles = length(imagefiles);    % Number of files found
 
 tic;
 
-for i = 1:nfiles             % Files to process
+for i = 7            % Files to process
     currentfilename = imagefiles(i).name
     currentimage = imread(currentfilename);
     size(currentimage);
