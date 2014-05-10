@@ -13,8 +13,8 @@ addpath('C:\Users\KDsilva\Dropbox\Images_of_Device\Common');
 % Path of photos
 path = strcat(pathFiles, '\*.jpg');  
 % Directory in which processed images will be saved
-dirProcessedImages = strcat(pathFiles, '\Processed');   
- 
+dirProcessedImages = strcat(pathFiles, '\Processed'); 
+
 %%%%%%%%%%%%%%%%
 % Parameters
 %%%%%%%%%%%%%%%%
@@ -34,18 +34,19 @@ minValue = 0.97;
 imagefiles = dir(path);
 nfiles = length(imagefiles);    % Number of files found
 
+
 % Checks if folders for processed images exist 
-if(~isequal(exist(dirProcessedImages, 'dir'),7))   
+if(~isequal(exist(dirProcessedImages, 'dir'),7))  
     mkdir('Processed');
 end
 
-if(~isequal(exist(strcat(pathFiles, '\Processed_Data'), 'dir'),7))   
+if(~isequal(exist(strcat(pathFiles, '\Processed_Data'), 'dir'),7))    
     mkdir('Processed_Data');
 end
-
+ 
 tic;
 
-for i = 25:nfiles                       % Files to process
+for i = 1:nfiles                       % Files to process
     run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeOneTest.m');  
 end
 

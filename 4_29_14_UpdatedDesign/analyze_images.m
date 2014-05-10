@@ -19,15 +19,15 @@ dirProcessedImages = strcat(pathFiles, '\Processed');
 % Parameters
 %%%%%%%%%%%%%%%%
 % Location of blue color standard
-blueRectCS = [120,80,100,50];
+blueRectCS = [70,60,70,50];
 % Location of black color standard
-blackRectCS = [120,185,100,50];
+blackRectCS = [190,60,70,50];
 % Location of white color standard
-whiteRectCS = [120,295,100,50];
+whiteRectCS = [300,60,70,50];
 % Location of QR code
-qrCode = [730,30,360,350];
+qrCode = [20,140,360,300];
 % Location of test strip
-testStrip = [530,110,185,150];
+testStrip = [480,150,185,150];
 % Point at which we're calculating the slope & area under the curve
 minValue = 0.97;
 
@@ -45,7 +45,7 @@ end
 
 tic;
 
-for i = 25:nfiles                       % Files to process
+for i = 26                     % Files to process
     run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeOneTest.m');  
 end
 
