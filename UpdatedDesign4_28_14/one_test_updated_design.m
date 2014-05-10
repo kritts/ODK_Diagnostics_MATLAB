@@ -5,6 +5,9 @@
 
 clear all, close all, clc
 
+% Path to common functions 
+addpath('C:\Users\KDsilva\Dropbox\Images_of_Device\Common');
+
 % Path of photos
 path = 'C:\Users\KDsilva\Dropbox\Images_of_Device\UpdatedDesign4_28_14\*.jpg';
 % Point at which we're calculating the slope & area under the curve
