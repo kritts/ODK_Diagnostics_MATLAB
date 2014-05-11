@@ -29,7 +29,7 @@ qrCode = [730,30,360,350];
 % Location of test strip
 testStrip = [530,110,185,150];
 % Point at which we're calculating the slope & area under the curve
-minValue = 0.97;
+minValue = 0.94;
 
 imagefiles = dir(path);
 nfiles = length(imagefiles);    % Number of files found
@@ -39,7 +39,6 @@ nfiles = length(imagefiles);    % Number of files found
 if(~isequal(exist(dirProcessedImages, 'dir'),7))  
     mkdir('Processed');
 end
-
 if(~isequal(exist(strcat(pathFiles, '\Processed_Data'), 'dir'),7))    
     mkdir('Processed_Data');
 end
