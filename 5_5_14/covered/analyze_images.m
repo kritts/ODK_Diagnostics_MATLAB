@@ -51,7 +51,7 @@ end
 
 tic;
 
-for i = 1:10                     % Files to process
+for i = 22:nfiles                     % Files to process
     run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeMultipleTests.m');  
 end
 
