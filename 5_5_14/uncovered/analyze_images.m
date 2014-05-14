@@ -1,6 +1,13 @@
 % Written by Krittika D'Silva (kdsilva@uw.edu)
 % Code to automatically process one immunoassay test. 
 
+% Naming convention: 
+% 10c_12pt_bright1
+% 10: "intensity" of line - 100 darkest black
+% c: covered 
+% 12pt: thickness of the paper used 
+% bright1: lighting conditions + test number  
+
 clear all, close all, clc
 
 %%%%%%%%%%%%%%%%
