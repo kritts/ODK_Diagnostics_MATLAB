@@ -8,7 +8,7 @@
 % 12pt: thickness of the paper used 
 % bright1: lighting conditions + test number  
 
-clear all, close all, clc
+clear all; close all; clc
 
 %%%%%%%%%%%%%%%%
 % Paths

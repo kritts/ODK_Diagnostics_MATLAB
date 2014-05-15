@@ -3,57 +3,8 @@ run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\preprocess.m');
 % Find circles
 [centers, radii, metric] = imfindcircles(bwRed, [10 20], 'ObjectPolarity','dark', 'Sensitivity', 0.90);
 if (length(centers) > 4)
-    [centersUpdated, radiiUpdated] = findFourFiducials(centers, radii, metric);
-    
-    % Rough crop, with circles on original image found
-    % figure(4 + i * nfiles)
-    % imshow(croppedImage)
-    % size(croppedImage)
-    % hold on
-    % viscircles(centersUpdated, radiiUpdated,'EdgeColor','b');
-    % title('Original Image, Cropped - With Fiducials Found')
-    
-    % New points to be used for spatial transformation
-    topLeftXY = roundn(centersUpdated(1,:), 1);
-    bottomRightXY = roundn(centersUpdated(4,:), 1);
-    
-    % Creating a rectangle with the points
-    newCenters = [topLeftXY; bottomRightXY(1), topLeftXY(2); topLeftXY(1), bottomRightXY(2); bottomRightXY];
-    
-    % Creating transformation matrix from new points
-    [TFORM] = cp2tform (centersUpdated, newCenters , 'linear conformal');
-    
-    % Transforming image, new possible functions: imtransform & imwarp
-    transformedImage = imtransform(croppedImage, TFORM);
-    
-    % Transformed image, with new cirles (before resizing)
-    % figure(5 + i * nfiles)
-    % hold on
-    % imshow(transformedImage);
-    % viscircles(newCenters, radiiUpdated,'EdgeColor','b');
-    % title('Original Image, Cropped- Transformed using Fiducials Found')
-    
-    % Crop the image to the new coordinates
-    transformedImageCropped = imcrop(transformedImage, [topLeftXY(1), topLeftXY(2), bottomRightXY(1) - topLeftXY(1), bottomRightXY(2) - topLeftXY(2)]);
-    
-    % figure(6 + i * nfiles)
-    % imshow(transformedImageCropped);
-    
-    % Resizing (NaN: MATLAB computers number of # columns automatically
-    %           to preserve the image aspect ratio)
-    resizedImage = imresize(transformedImageCropped, [380, 1100], 'bilinear');
-    
-    % Blue color standard
-    RGB_blue_CS =  mean((mean(imcrop(resizedImage, blueRectCS))));
-    blue_CS = mean(RGB_blue_CS);
-    
-    % Black color standard
-    RGB_black_CS = mean((mean(imcrop(resizedImage, blackRectCS))));
-    black_CS = mean(RGB_black_CS);
-    
-    % White color standard
-    RGB_white_CS = mean((mean(imcrop(resizedImage, whiteRectCS))));
-    white_CS = mean(RGB_white_CS);
+
+    run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\processFiducials.m');
     
     % Location of 5 tests on the strip
     firstRectangle = imcrop(resizedImage, testStrip1);
@@ -62,32 +13,28 @@ if (length(centers) > 4)
     fourthRectangle = imcrop(resizedImage,testStrip4);
     fifthRectangle = imcrop(resizedImage,testStrip5);
     
-    [height, width, dimensions]=size(firstRectangle);
+    % Use the dimensions of the first tests for all 5 tests
+    [height, width, dimensions] = size(firstRectangle);
     centerWidth = round(width/2);
     
-    % Looks specifically at the red color channel
+    % Looks specifically at the red color channel intensity
     avgIntensityOne = firstRectangle(1:height, centerWidth-20:centerWidth+20, 1);
     avgIntensityOne = mean(avgIntensityOne, 2);
-    minOne = min(avgIntensityOne);
-    
+    minOne = min(avgIntensityOne); 
     avgIntensityTwo = secondRectangle(1:height, centerWidth-20:centerWidth+20, 1);
     avgIntensityTwo = mean(avgIntensityTwo, 2);
-    minTwo = min(avgIntensityTwo);
-    
+    minTwo = min(avgIntensityTwo); 
     avgIntensityThree = thirdRectangle(1:height, centerWidth-20:centerWidth+20, 1);
     avgIntensityThree = mean(avgIntensityThree, 2);
-    minThree = min(avgIntensityThree);
-    
+    minThree = min(avgIntensityThree); 
     avgIntensityFour = fourthRectangle(1:height, centerWidth-20:centerWidth+20, 1);
     avgIntensityFour = mean(avgIntensityFour, 2);
-    minFour = min(avgIntensityFour);
-    
+    minFour = min(avgIntensityFour); 
     avgIntensityFive = fifthRectangle(1:height, centerWidth-20:centerWidth+20, 1);
     avgIntensityFive = mean(avgIntensityFive, 2);
     minFive = min(avgIntensityFive);
-    
-    
-    % Plot normalized test strip intensities
+     
+    % Calcualte normalized test strip intensities
     [height,width]=size(firstRectangle);
     centerWidth = round(width/2);
     centerHeight = round(height/2);
@@ -126,6 +73,7 @@ if (length(centers) > 4)
     fprintf(outid, '%s\n', header);
     
     if(sum_under_curve_1 ~= -1 & sum_under_curve_2 ~= -1 & sum_under_curve_3 ~= -1 & sum_under_curve_4 ~= -1 & sum_under_curve_5 ~= -1)
+        % If the tests are valid, plot intensity curves and save the data
         % Color standards
         rectangle('Position', blueRectCS,  'LineWidth', 3, 'EdgeColor', 'r')
         rectangle('Position', blackRectCS, 'LineWidth', 3, 'EdgeColor', 'r')

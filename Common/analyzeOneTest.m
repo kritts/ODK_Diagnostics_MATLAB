@@ -3,82 +3,22 @@ run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\preprocess.m');
 % Find circles
 [centers, radii, metric] = imfindcircles(bwRed, [10 20], 'ObjectPolarity','dark', 'Sensitivity', 0.90);
 if (length(centers) > 4)
-    [centersUpdated, radiiUpdated] = findFourFiducials(centers, radii, metric);
+ 
+    run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\processFiducials.m');
     
-    % Rough crop, with circles on original image found
-    % figure(4 + i * nfiles)
-    % imshow(croppedImage)
-    % size(croppedImage)
-    % hold on
-    % viscircles(centersUpdated, radiiUpdated,'EdgeColor','b');
-    % title('Original Image, Cropped - With Fiducials Found')
-    
-    % New points to be used for spatial transformation
-    topLeftXY = roundn(centersUpdated(1,:), 1);
-    bottomRightXY = roundn(centersUpdated(4,:), 1);
-    
-    % Creating a rectangle with the points
-    newCenters = [topLeftXY; bottomRightXY(1), topLeftXY(2); topLeftXY(1), bottomRightXY(2); bottomRightXY];
-    
-    % Creating transformation matrix from new points
-    [TFORM] = cp2tform (centersUpdated, newCenters , 'linear conformal');
-    
-    % Transforming image, new possible functions: imtransform & imwarp
-    transformedImage = imtransform(croppedImage, TFORM);
-    
-    % Transformed image, with new cirles (before resizing)
-    % figure(5 + i * nfiles)
-    % hold on
-    % imshow(transformedImage);
-    % viscircles(newCenters, radiiUpdated,'EdgeColor','b');
-    % title('Original Image, Cropped- Transformed using Fiducials Found')
-    
-    % Crop the image to the new coordinates
-    transformedImageCropped = imcrop(transformedImage, [topLeftXY(1), topLeftXY(2), bottomRightXY(1) - topLeftXY(1), bottomRightXY(2) - topLeftXY(2)]);
-    
-    % figure(6 + i * nfiles)
-    % imshow(transformedImageCropped);
-    
-    % Resizing (NaN: MATLAB computers number of # columns automatically
-    %           to preserve the image aspect ratio)
-    resizedImage = imresize(transformedImageCropped, [380, 1100], 'bilinear');
-    
-    % Color standards
-    rectangle('Position', blueRectCS,  'LineWidth', 3, 'EdgeColor', 'r')
-    rectangle('Position', blackRectCS, 'LineWidth', 3, 'EdgeColor', 'r')
-    rectangle('Position', whiteRectCS, 'LineWidth', 3, 'EdgeColor', 'r')
-    
-    % QR code
-    rectangle('Position', qrCode, 'LineWidth', 3, 'EdgeColor', 'r');
-    
-    % Tests
-    rectangle('Position', testStrip, 'LineWidth', 3, 'EdgeColor', 'r');
-    
-    % Blue color standard
-    RGB_blue_CS =  mean((mean(imcrop(resizedImage, blueRectCS))));
-    blue_CS = mean(RGB_blue_CS);
-    
-    % Black color standard
-    RGB_black_CS = mean((mean(imcrop(resizedImage, blackRectCS))));
-    black_CS = mean(RGB_black_CS);
-    
-    % White color standard
-    RGB_white_CS = mean((mean(imcrop(resizedImage, whiteRectCS))));
-    white_CS = mean(RGB_white_CS);
-    
-    % Location of 5 tests on the strip
+    % Location of test on the strip
     firstRectangle = imcrop(resizedImage,testStrip);
     figureTitle = strcat('ProcessedImg_', '1_', currentfilename);
     
-    [height, width, dimensions]=size(firstRectangle);
+    [height, width, dimensions] = size(firstRectangle);
     centerWidth = round(width/2);
     
-    % Looks specifically at the red color channel
+    % Looks specifically at the red color channel intensity
     avgIntensityOne = firstRectangle(1:height, centerWidth-20:centerWidth+20,1);
     avgIntensityOne = mean(avgIntensityOne, 2);
     minOne = min(avgIntensityOne);
     
-    % Plot normalized test strip intensities
+    % Calculate normalized test strip intensity
     [height,width]=size(firstRectangle);
     centerWidth = round(width/2);
     centerHeight = round(height/2);
@@ -91,13 +31,25 @@ if (length(centers) > 4)
     pt1 = find(avgNormalizedOne < minValue, 1);
     
     [slope_up_1, slope_down_1, sum_under_curve_1] = getSlopeAndArea(avgNormalizedOne, pt1, minValue);
-            % Write data to a csv file
-        header = ['Name of file,', 'Blue Color Standard,', 'Black Color Standard,', 'White Color Standard,', 'Raw data,', 'Normalized data,', 'Slope Down,','Slope Up,','Sum under curve,'];
-        outid = fopen(strcat(pathFiles,'\Processed_Data\','Analysis_Updated_Algorithm', date, '.csv'), 'at');
-        fprintf(outid, '\n%s\n', datestr(now));
-        fprintf(outid, '%s\n', header);
+    % Write data to a csv file
+    header = ['Name of file,', 'Blue Color Standard,', 'Black Color Standard,', 'White Color Standard,', 'Raw data,', 'Normalized data,', 'Slope Down,','Slope Up,','Sum under curve,'];
+    outid = fopen(strcat(pathFiles,'\Processed_Data\','Analysis_Updated_Algorithm', date, '.csv'), 'at');
+    fprintf(outid, '\n%s\n', datestr(now));
+    fprintf(outid, '%s\n', header);
+    
     if(sum_under_curve_1 ~= -1)
-          
+        % If the tests are valid, plot intensity curves and save the data
+        % Color standards
+        rectangle('Position', blueRectCS,  'LineWidth', 3, 'EdgeColor', 'r')
+        rectangle('Position', blackRectCS, 'LineWidth', 3, 'EdgeColor', 'r')
+        rectangle('Position', whiteRectCS, 'LineWidth', 3, 'EdgeColor', 'r')
+        
+        % QR code
+        rectangle('Position', qrCode, 'LineWidth', 3, 'EdgeColor', 'r');
+        
+        % Tests
+        rectangle('Position', testStrip, 'LineWidth', 3, 'EdgeColor', 'r');
+        
         % New resized image
         processedImg1 = figure(7 + i * nfiles);
         hold on
@@ -145,7 +97,7 @@ if (length(centers) > 4)
         
         normalizedStr = strcat('ProcessedImg_','4_', currentfilename);
         saveas(processedImage,fullfile(dirProcessedImages, normalizedStr),'jpg');
-       
+        
         outputarray = [blue_CS, black_CS, white_CS, minOne, minNorm1, slope_up_1, slope_down_1, sum_under_curve_1];
         fprintf(outid, '%s', currentfilename);
         fprintf(outid, '%s', ',');
