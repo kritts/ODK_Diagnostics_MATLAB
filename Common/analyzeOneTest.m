@@ -37,8 +37,14 @@ if (length(centers) > 4)
     fprintf(outid, '\n%s\n', datestr(now));
     fprintf(outid, '%s\n', header);
     
-    if(sum_under_curve_1 ~= -1)
-        % If the tests are valid, plot intensity curves and save the data
+    if(sum_under_curve_1 ~= -1)       % If the tests are valid, plot intensity curves and save the data 
+        % New resized image
+        processedImg1 = figure(7 + i * nfiles);
+        hold on
+        imshow(resizedImage);
+        title_1 = strcat('Original Image, Cropped After Transformation: ',strrep(currentfilename,'_','\_'));
+        title(title_1);
+        
         % Color standards
         rectangle('Position', blueRectCS,  'LineWidth', 3, 'EdgeColor', 'r')
         rectangle('Position', blackRectCS, 'LineWidth', 3, 'EdgeColor', 'r')
@@ -50,14 +56,7 @@ if (length(centers) > 4)
         % Tests
         rectangle('Position', testStrip, 'LineWidth', 3, 'EdgeColor', 'r');
         
-        % New resized image
-        processedImg1 = figure(7 + i * nfiles);
-        hold on
-        imshow(resizedImage);
-        title_1 = strcat('Original Image, Cropped After Transformation: ',strrep(currentfilename,'_','\_'));
-        title(title_1);
-        
-        saveas(processedImg1,fullfile(dirProcessedImages, figureTitle),'jpg');
+        saveas(processedImg1,fullfile(strcat(dirProcessedImages, '\Location_Fiducials'), figureTitle),'jpg');
         
         % Plot image of test
         processedImage2 =  figure(8 + i * nfiles);
@@ -70,7 +69,7 @@ if (length(centers) > 4)
         imshow(firstRectangle)
         
         strFirst = strcat('ProcessedImg_', '2_', currentfilename);
-        saveas(processedImage2,fullfile(dirProcessedImages, strFirst),'jpg');
+        saveas(processedImage2,fullfile(strcat(dirProcessedImages, '\Location_Tests'), strFirst),'jpg');
         
         %     % Plot test strip intensities
         %     averageIntensities = figure(9 + i * nfiles);
@@ -96,7 +95,7 @@ if (length(centers) > 4)
         plot(1:length(avgIntensityOne),avgNormalizedOne)
         
         normalizedStr = strcat('ProcessedImg_','4_', currentfilename);
-        saveas(processedImage,fullfile(dirProcessedImages, normalizedStr),'jpg');
+        saveas(processedImage,fullfile(strcat(dirProcessedImages, '\Normalized_Tests'), normalizedStr),'jpg');
         
         outputarray = [blue_CS, black_CS, white_CS, minOne, minNorm1, slope_up_1, slope_down_1, sum_under_curve_1];
         fprintf(outid, '%s', currentfilename);

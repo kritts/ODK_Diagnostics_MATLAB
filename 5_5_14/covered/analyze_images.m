@@ -9,7 +9,9 @@
 % 12pt: thickness of the paper used 
 % bright1: lighting conditions + test number  
  
-clear all; close all; clc
+clear all
+close all
+clc
 
 %%%%%%%%%%%%%%%%
 % Paths
@@ -53,14 +55,27 @@ nfiles = length(imagefiles);
 if(~isequal(exist(dirProcessedImages, 'dir'),7))   
     mkdir('Processed');
 end
+  
+if(~isequal(exist(strcat(pathFiles, '\Processed\Location_Fiducials'), 'dir'),7))   
+    mkdir('Processed\Location_Fiducials');
+end
+
+if(~isequal(exist(strcat(pathFiles, '\Processed\Location_Tests'), 'dir'),7))   
+    mkdir('Processed\Location_Tests');
+end
+
+if(~isequal(exist(strcat(pathFiles, '\Processed\Normalized_Tests'), 'dir'),7))   
+    mkdir('Processed\Normalized_Tests');
+end
 
 if(~isequal(exist(strcat(pathFiles, '\Processed_Data'), 'dir'),7))   
     mkdir('Processed_Data');
 end
+ 
 
 tic;
 
-for i = 10                     % Files to process
+for i = 1:nfiles                    % Files to process
     run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeMultipleTests.m');  
 end
 
