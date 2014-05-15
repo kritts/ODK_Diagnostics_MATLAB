@@ -1,5 +1,5 @@
 % Given data for an intensity curve of a test
-% determines slope of curve at the given index and area below the given 
+% determines slope of curve at the given index and area below the given
 % value
 function [slopeUp, slopeDown, areaUnderCurve] = getSlopeAndArea(normalizedValues, indexUp, minValue)
     if(~isempty(indexUp))
@@ -7,12 +7,19 @@ function [slopeUp, slopeDown, areaUnderCurve] = getSlopeAndArea(normalizedValues
         allValuesDown = find(normalizedValues > minValue);
         listDownwards = find(allValuesDown > indexUp,1);
         indexDown = allValuesDown(listDownwards);
-        slopeDown = (normalizedValues(indexDown) - normalizedValues(indexDown - 5))/5;
-        areaUnderCurve = 0;
-        for j = indexUp:indexDown 
-            areaUnderCurve = areaUnderCurve + (minValue - normalizedValues(j));
+
+        if(indexDown > 5)
+            slopeDown = (normalizedValues(indexDown) - normalizedValues(indexDown - 5))/5;
+            areaUnderCurve = 0;
+            for j = indexUp:indexDown
+                areaUnderCurve = areaUnderCurve + (minValue - normalizedValues(j));
+            end
+        else
+            % Invalid test
+            slopeUp = -1;
+            slopeDown = -1;
+            areaUnderCurve = -1;
         end
-        
         
     else
         slopeUp = 0;
@@ -20,4 +27,4 @@ function [slopeUp, slopeDown, areaUnderCurve] = getSlopeAndArea(normalizedValues
         areaUnderCurve = 0;
 
     end
-end 
+end
