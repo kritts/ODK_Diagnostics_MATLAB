@@ -10,7 +10,9 @@
 % bright1: lighting conditions + test number  
 
 
-clear all, close all, clc
+clear all
+close all
+clc
 
 %%%%%%%%%%%%%%%%
 % Paths
@@ -47,7 +49,8 @@ testStrip5 = [695,200,210,85];
 minValue = 0.97;
 
 imagefiles = dir(path);
-nfiles = length(imagefiles);    % Number of files found
+% Number of files found
+nfiles = length(imagefiles);    
 
 % Checks if folders for processed images exist 
 if(~isequal(exist(dirProcessedImages, 'dir'),7))   
@@ -60,7 +63,7 @@ end
 
 tic;
 
-for i = 7:9                     % Files to process
+for i = 10                     % Files to process
     run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeMultipleTests.m');  
 end
 
