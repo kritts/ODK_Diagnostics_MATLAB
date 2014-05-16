@@ -1,19 +1,22 @@
 [centersUpdated, radiiUpdated] = findFourFiducials(centers, radii, metric);
 
 % Rough crop, with circles on original image found
-% figure(4 + i * nfiles)
-% imshow(croppedImage)
-% size(croppedImage)
-% hold on
-% viscircles(centersUpdated, radiiUpdated,'EdgeColor','b');
-% title('Original Image, Cropped - With Fiducials Found')
+figure(4 + i * nfiles)
+imshow(croppedImage)
+size(croppedImage)
+hold on
+viscircles(centersUpdated, radiiUpdated,'EdgeColor','b');
+title('Original Image, Cropped - With Fiducials Found')
 
 % New points to be used for spatial transformation
-topLeftXY = roundn(centersUpdated(1,:), 1);
-bottomRightXY = roundn(centersUpdated(4,:), 1);
+topLeftXY = round(centersUpdated(1,:)); 
+bottomRightXY = round(centersUpdated(4,:));
 
 % Creating a rectangle with the points
-newCenters = [topLeftXY; bottomRightXY(1), topLeftXY(2); topLeftXY(1), bottomRightXY(2); bottomRightXY];
+newCenters = [topLeftXY(1),  topLeftXY(2); 
+              bottomRightXY(1), topLeftXY(2); 
+              topLeftXY(1), bottomRightXY(2); 
+              bottomRightXY(1), bottomRightXY(2)];
 
 % Creating transformation matrix from new points
 [TFORM] = cp2tform (centersUpdated, newCenters , 'linear conformal');

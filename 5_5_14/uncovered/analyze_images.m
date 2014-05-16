@@ -11,8 +11,7 @@
 clear all
 close all
 clc
-
-
+ 
 %%%%%%%%%%%%%%%%
 % Paths
 %%%%%%%%%%%%%%%%
@@ -29,17 +28,17 @@ dirProcessedImages = strcat(pathFiles, '\Processed');
 % Parameters
 %%%%%%%%%%%%%%%%
 % Location of blue color standard
-blueRectCS = [55,60,70,50];
+blueRectCS = [90,60,30,20];
 % Location of black color standard
-blackRectCS = [170,60,70,50];
+blackRectCS = [210,60,30,20];
 % Location of white color standard
-whiteRectCS = [280,60,70,50];
+whiteRectCS = [320,60,30,20];
 % Location of QR code
 qrCode = [20,125,340,240];
 % Locations of test strips
 testStrip1 = [455,75,210,85];
 testStrip2 = [455,150,210,85];
-testStrip3 = [455,220,210,85];
+testStrip3 = [455,225,210,85];
 testStrip4 = [695,85,210,85];
 testStrip5 = [695,200,210,85];
 
@@ -72,7 +71,7 @@ if(~isequal(exist(strcat(pathFiles, '\Processed_Data'), 'dir'),7))
 end
 tic;
 
-for i = 9:nfiles                     % Files to process
+for i = 4                    % Files to process   3, 27, 8, 32, 37 - should change slope up algorithm as well ***LOOK AT 3***
     run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeMultipleTests.m');  
 end
 

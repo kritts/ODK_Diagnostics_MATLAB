@@ -73,8 +73,7 @@ if (length(centers) > 4)
     fprintf(outid, '%s\n', header);
     
     % If the tests are valid, plot intensity curves and save the data
-    if(sum_under_curve_1 ~= -1 & sum_under_curve_2 ~= -1 & sum_under_curve_3 ~= -1 & sum_under_curve_4 ~= -1 & sum_under_curve_5 ~= -1)
- 
+    if(sum_under_curve_1 ~= -1 | sum_under_curve_2 ~= -1 | sum_under_curve_3 ~= -1 | sum_under_curve_4 ~= -1 | sum_under_curve_5 ~= -1)
         % New resized image
         processedImg1 = figure(7 + i * nfiles);
         hold on
@@ -97,7 +96,7 @@ if (length(centers) > 4)
         rectangle('Position', testStrip4, 'LineWidth', 3, 'EdgeColor', 'r')
         rectangle('Position', testStrip5, 'LineWidth', 3, 'EdgeColor', 'r')
         
-                figureTitle = strcat('ProcessedImg_', '1_', currentfilename);
+        figureTitle = strcat('ProcessedImg_', '1_', currentfilename);
         saveas(processedImg1,fullfile(strcat(dirProcessedImages, '\Location_Fiducials'), figureTitle),'jpg');
         
         
