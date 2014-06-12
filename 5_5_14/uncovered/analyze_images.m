@@ -71,7 +71,7 @@ if(~isequal(exist(strcat(pathFiles, '\Processed_Data'), 'dir'),7))
 end
 tic;
 
-for i = 4                    % Files to process   3, 27, 8, 32, 37 - should change slope up algorithm as well ***LOOK AT 3***
+for i = 28:nfiles                    % Files to process   3, 27, 8, 32, 37 - should change slope up algorithm as well ***LOOK AT 3***
     run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeMultipleTests.m');  
 end
 

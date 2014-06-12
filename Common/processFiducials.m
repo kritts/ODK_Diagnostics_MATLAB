@@ -1,12 +1,12 @@
 [centersUpdated, radiiUpdated] = findFourFiducials(centers, radii, metric);
 
 % Rough crop, with circles on original image found
-figure(4 + i * nfiles)
-imshow(croppedImage)
-size(croppedImage)
-hold on
-viscircles(centersUpdated, radiiUpdated,'EdgeColor','b');
-title('Original Image, Cropped - With Fiducials Found')
+% figure(4 + i * nfiles)
+% imshow(croppedImage)
+% size(croppedImage)
+% hold on
+% viscircles(centersUpdated, radiiUpdated,'EdgeColor','b');
+% title('Original Image, Cropped - With Fiducials Found')
 
 % New points to be used for spatial transformation
 topLeftXY = round(centersUpdated(1,:)); 

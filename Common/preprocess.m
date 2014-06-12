@@ -28,10 +28,10 @@ heightBottom = round(height * 7/8);
 regionOfInterestRed = blueChannel(heightTop:heightBottom, widthLeft:widthRight);
 croppedImage = currentimage(heightTop:heightBottom, widthLeft:widthRight, :);
 
- % Original image, cropped
-  figure(2 + i * nfiles)
-  imshow(croppedImage)
-  title('Original Image After a Rough Crop')
+%  % Original image, cropped
+%   figure(2 + i * nfiles)
+%   imshow(croppedImage)
+%   title('Original Image After a Rough Crop')
 
 % Black and white
 levelRed = graythresh(regionOfInterestRed);

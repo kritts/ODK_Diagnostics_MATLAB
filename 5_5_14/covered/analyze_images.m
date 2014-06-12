@@ -1,7 +1,6 @@
 % Written by Krittika D'Silva (kdsilva@uw.edu)
 % Code to automatically process one immunoassay test. 
 
-
 % Naming convention: 
 % 10c_12pt_bright1
 % 10: "intensity" of line - 100 darkest black
@@ -75,7 +74,7 @@ end
 
 tic;
 
-for i = 1:nfiles                    % Files to process
+for i = 26                    % Files to process
     run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeMultipleTests.m');  
 end
 
