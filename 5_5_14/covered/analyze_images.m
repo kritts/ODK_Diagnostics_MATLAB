@@ -18,7 +18,7 @@ clc
 % Current directory
 pathFiles = pwd;
 % Path to common functions
-addpath('C:\Users\KDsilva\Dropbox\Images_of_Device\Common');
+addpath('C:\Users\CJ\Dropbox\Images_of_Device\Common');
 % Path of photos
 path = strcat(pathFiles, '\*.jpg');  
 % Directory in which processed images will be saved
@@ -75,7 +75,7 @@ end
 tic;
 
 for i = 26                    % Files to process
-    run('C:\Users\KDsilva\Dropbox\Images_of_Device\Common\analyzeMultipleTests.m');  
+    run('C:\Users\CJ\Dropbox\Images_of_Device\Common\analyzeMultipleTests.m');  
 end
 
 toc
